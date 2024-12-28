@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 10px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #4a5568;
+            margin: 15px 0;
+        }
+        .otp {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4299e1;
+            text-align: center;
+            padding: 20px;
+            background: #ebf8ff;
+            border-radius: 10px;
+            margin: 25px 0;
+            letter-spacing: 5px;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #edf2f7;
+        }
+        .footer p {
+            font-size: 14px;
+            color: #718096;
+            text-align: center;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OTP Verification</h1>
+        <p>Dear <th:block th:text="${name}"></th:block>,</p>
+        <p>Your One-Time Password (OTP) for the S13SH app is:</p>
+        <p class="otp" th:text="${otp}"></p>
+        <p>Please enter this OTP in the application to verify your email address for Account with username <th:block th:text="${username}"></th:block>.</p>
+        <p>Thank you for using our service!</p>
+        <div class="footer">
+            <p>If you did not request this, please ignore this email.</p>
+        </div>
+    </div>
+</body>
+</html>

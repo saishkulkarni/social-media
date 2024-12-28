@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login to s13sh - Secure authentication portal">
+    <meta name="theme-color" content="#667eea">
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css"
+        integrity="sha512-rt/SrQ4UNIaGfDyEXZtNcyWvQeOq0QLygHluFQcSjaGB04IxWhal71tKuzP6K8eYXYB6vJV4pHkXcmFGGQ1/0w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <title>Login - s13sh</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+            --hover-gradient: linear-gradient(45deg, #764ba2, #667eea);
+            --primary-color: #667eea;
+            --text-dark: #4a5568;
+            --text-light: #718096;
+            --white: #ffffff;
+        }
+
+        body {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        .login-container {
+            max-width: 500px;
+            width: 100%;
+            padding: clamp(2rem, 5vw, 4rem);
+            border-radius: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-header {
+            margin-bottom: 2.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            font-size: clamp(2rem, 5vw, 3rem);
+            line-height: 1.2;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 2rem;
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background: var(--hover-gradient);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            display: block;
+            text-align: left;
+        }
+
+        .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 0.875rem 1.25rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            height: auto;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            outline: none;
+        }
+
+        .text-center a {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            margin-top: 1.5rem;
+            display: inline-block;
+        }
+
+        .text-center a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .text-center a:hover:after {
+            width: 100%;
+        }
+
+        .footer {
+            margin-top: 2.5rem;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .message {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .alert-message {
+            margin: 0.5rem 0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            animation: fadeIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0 0.5rem;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .close-btn:hover {
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            ::before,
+            ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+            }
+
+            .btn-primary {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .form-control {
+                padding: 0.75rem 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="message" role="alert">
+        <div th:if="${session.error}" class="alert-message alert-error">
+            <span th:text="${session.error}"></span>
+            <button class="close-btn" onclick="this.parentElement.style.display='none'">×</button>
+        </div>
+        <div th:if="${session.success}" class="alert-message alert-success">
+            <span th:text="${session.success}"></span>
+            <button class="close-btn" onclick="this.parentElement.style.display='none'">×</button>
+        </div>
+        <th:block th:text="${@messageRemover.remove()}"></th:block>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const messages = document.querySelectorAll('.alert-message');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 3000);
+            });
+        });
+    </script>
+    <main class="login-container">
+        <h1 class="login-header">Login</h1>
+        <form action="/login" method="post" novalidate>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required autocomplete="username"
+                    placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required
+                    autocomplete="current-password" placeholder="Enter your password">
+            </div>
+            <button type="submit" class="btn btn-primary">Log In</button>
+        </form>
+        <div class="text-center mt-4">
+            <a href="/register">Don't have an account? Create one</a>
+        </div>
+        <footer class="footer">
+            ©
+            <script>document.write(new Date().getFullYear())</script> s13sh. All rights reserved.
+        </footer>
+    </main>
+</body>
+
+</html>

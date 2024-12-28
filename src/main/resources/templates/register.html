@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Register for s13sh - Create your account">
+    <meta name="theme-color" content="#4F46E5">
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <title>Register - s13sh</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #4F46E5, #7C3AED);
+            --hover-gradient: linear-gradient(45deg, #7C3AED, #4F46E5);
+            --primary-color: #4F46E5;
+            --text-dark: #1F2937;
+            --text-light: #6B7280;
+            --white: #ffffff;
+        }
+        body {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 2rem;
+        }
+        .register-container {
+            max-width: 550px;
+            width: 100%;
+            padding: 3rem;
+            border-radius: 2rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .register-header {
+            margin-bottom: 3rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            font-size: 2.5rem;
+            letter-spacing: -0.025em;
+        }
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 1rem;
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.5);
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 2rem;
+        }
+        .btn-primary:hover {
+            background: var(--hover-gradient);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.6);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            display: block;
+            text-align: left;
+        }
+        .form-control {
+            border: 2px solid #E5E7EB;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background-color: #F9FAFB;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            background-color: var(--white);
+        }
+        .text-center a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-block;
+            margin-top: 1.5rem;
+        }
+        .text-center a:hover {
+            color: #7C3AED;
+        }
+        .footer {
+            margin-top: 2.5rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        .message {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 500px;
+        }
+        .message h3 {
+            margin: 0;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        @media (max-width: 640px) {
+            .register-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            .register-header {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="message" role="alert">
+        <h3 style="color: #DC2626; background: rgba(254, 226, 226, 0.9);" th:if="${session.error}" th:text="${session.error}"></h3>
+        <h3 style="color: #059669; background: rgba(209, 250, 229, 0.9);" th:if="${session.success}" th:text="${session.success}"></h3>
+        <th:block th:text="${@messageRemover.remove()}"></th:block>
+    </div>
+    <main class="register-container">
+        <h1 class="register-header">Register</h1>
+        <form action="/register" method="post" th:object="${user}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="firstname">First Name</label>
+                <input type="text" class="form-control" id="firstname" th:field="*{firstname}" name="firstname" placeholder="Enter your first name">
+                <span th:errors="*{firstname}" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="lastname">Last Name</label>
+                <input type="text" class="form-control" id="lastname" th:field="*{lastname}" name="lastname" placeholder="Enter your last name">
+                <span th:errors="*{lastname}" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" th:field="*{username}" name="username" placeholder="Choose a username">
+                <span th:errors="*{username}" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="mobile">Mobile</label>
+                <input type="tel" class="form-control" id="mobile" th:field="*{mobile}" name="mobile" placeholder="Enter your mobile number">
+                <span th:errors="*{mobile}" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" th:field="*{email}" name="email" placeholder="Enter your email">
+                <span th:errors="*{email}" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Create a strong password">
+                <span th:errors="*{password}" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="confirmpassword">Confirm Password</label>
+                <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirm your password">
+                <span th:errors="*{confirmpassword}" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select class="form-control" id="gender" th:field="*{gender}" name="gender">
+                    <option selected disabled value="">Select your gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                <span th:errors="*{gender}" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" class="form-control" th:field="*{dob}" id="dob" name="dob">
+                <span th:errors="*{dob}" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="profilepicture">Profile Picture</label>
+                <input type="file" class="form-control" id="profilepicture" name="profilepicture" accept="image/*">
+                <span th:errors="*{profilepicture}" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea class="form-control" id="bio" name="bio" th:field="*{bio}" rows="3" placeholder="Tell us about yourself"></textarea>
+                <span th:errors="*{bio}" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+        <div class="text-center">
+            <a href="/login">Already have an account? Sign in</a>
+        </div>
+        <footer class="footer">
+            © <script>document.write(new Date().getFullYear())</script> s13sh. All rights reserved.
+        </footer>
+    </main>
+</body>
+</html>

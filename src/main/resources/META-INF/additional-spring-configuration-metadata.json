@@ -1,0 +1,27 @@
+{"properties": [
+  {
+    "name": "cloudinary.properties.cloud_name",
+    "type": "java.lang.String",
+    "description": "A description for 'cloudinary.properties.cloud_name'"
+  },
+  {
+    "name": "cloudinary.properties.api_key",
+    "type": "java.lang.String",
+    "description": "A description for 'cloudinary.properties.api_key'"
+  },
+  {
+    "name": "cloudinary.properties.secret_key",
+    "type": "java.lang.String",
+    "description": "A description for 'cloudinary.properties.secret_key'"
+  },
+  {
+    "name": "razorpay.properties.api_key",
+    "type": "java.lang.String",
+    "description": "A description for 'razorpay.properties.api_key'"
+  },
+  {
+    "name": "razorpay.properties.api_secret",
+    "type": "java.lang.String",
+    "description": "A description for 'razorpay.properties.api_secret'"
+  }
+]}
