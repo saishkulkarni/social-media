@@ -53,4 +53,23 @@ public class SocialMediaController {
         return userService.resendOtp(id, session);
     }
 
+    @PostMapping("/login")
+    public String login(@RequestParam String username, @RequestParam String password, HttpSession session) {
+        return userService.login(username, password, session);
+    }
+
+    @GetMapping("/home")
+    public String home(HttpSession session) {
+        return userService.loadHome(session);
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        return userService.logout(session);
+    }
+    
+    @GetMapping("/profile")
+    public String profile(HttpSession session, ModelMap map) {
+        return userService.loadProfile(session, map);
+    }
 }

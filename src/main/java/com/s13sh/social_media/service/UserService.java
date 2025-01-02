@@ -48,6 +48,7 @@ public class UserService {
             return "register.html";
         } else {
             user.setOtp(new Random().nextInt(100000, 1000000));
+            System.err.println(user.getOtp());
             user.setPassword(AES.encrypt(user.getPassword()));
             user.setProfilepictureurl(cloudinaryhelper.uploadProfilePicture(user.getProfilepicture().getBytes()));
             userRepository.save(user);
@@ -79,10 +80,64 @@ public class UserService {
     public String resendOtp(int id, HttpSession session) {
         User user = userRepository.findById(id).orElseThrow();
         user.setOtp(new Random().nextInt(100000, 1000000));
+        System.err.println(user.getOtp());
         userRepository.save(user);
         emailSender.sendOtp(user);
         session.setAttribute("success", "Otp Re-Sent Success");
         return "redirect:/verify-otp/" + id;
+    }
+
+    public String login(String username, String password, HttpSession session) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            session.setAttribute("error", "Invalid Username");
+            return "redirect:/login";
+        } else {
+            if (AES.decrypt(user.getPassword()).equals(password)) {
+                if (user.isVerified()) {
+                    session.setAttribute("user", user);
+                    session.setAttribute("success", "Login Success");
+                    return "redirect:/home";
+                } else {
+                    session.setAttribute("error", "Please Verify Your Account First");
+                    user.setOtp(new Random().nextInt(100000, 1000000));
+                    System.err.println(user.getOtp());
+                    userRepository.save(user);
+                    emailSender.sendOtp(user);
+                    session.setAttribute("success", "Otp Re-Sent Success");
+                    return "redirect:/verify-otp/" + user.getId();
+                }
+            } else {
+                session.setAttribute("error", "Invalid Password");
+                return "redirect:/login";
+            }
+        }
+    }
+
+    public String loadHome(HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            return "home.html";
+        }
+    }
+
+    public String logout(HttpSession session) {
+        session.removeAttribute("user");
+        session.setAttribute("success", "Logout Success");
+        return "redirect:/login";
+    }
+
+    public String loadProfile(HttpSession session, ModelMap map) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            map.put("user", user);
+            return "profile.html";
+        }
     }
 
 }
