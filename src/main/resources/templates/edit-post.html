@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="s13sh - Edit Post">
+    <meta name="theme-color" content="#667eea">
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Edit Post - s13sh</title>
+    <style>
+         :root {
+            --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+            --hover-gradient: linear-gradient(45deg, #764ba2, #667eea);
+            --primary-color: #667eea;
+            --text-dark: #4a5568;
+            --text-light: #718096;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: var(--primary-gradient);
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand {
+            color: var(--white) !important;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--white) !important;
+            font-weight: 600;
+            margin: 0 1rem;
+        }
+
+        .main-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .profile-card {
+            background: var(--white);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .edit-btn {
+            background: var(--primary-gradient);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            margin: 0 0.5rem;
+        }
+
+        .post-image {
+            max-width: 300px;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="/home">s13sh</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home"><i class="fas fa-home"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="profile-card">
+            <h3 class="mb-4">Edit Post</h3>
+            <form action="/post/update" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id" th:value="${post.id}">
+                <div class="form-group">
+                    <label for="content">Caption</label>
+                    <textarea class="form-control" id="content" name="caption" rows="3" th:text="${post.caption}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Current Image</label>
+                    <img th:if="${post.imageUrl}" th:src="${post.imageUrl}" alt="Current Post Image" class="post-image d-block">
+                    <p th:if="${post.imageUrl==null}">No image currently attached</p>
+                </div>
+                <div class="form-group">
+                    <label for="image">Change Image (optional)</label>
+                    <input type="file" class="form-control-file" id="image" name="image" accept="image/*">
+                </div>
+                <button type="submit" class="btn edit-btn">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <a href="/profile" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+</html>

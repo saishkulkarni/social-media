@@ -27,4 +27,15 @@ public class Cloudinaryhelper {
         return null;
     }
 
+    public String uploadPostPicture(byte[] bytes) {
+        Cloudinary cloudinary = new Cloudinary("cloudinary://" + key + ":" + secret + "@" + cloudname);
+        try {
+            return cloudinary.uploader().upload(bytes, ObjectUtils.asMap("folder", "post_pictures")).get("url")
+                    .toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

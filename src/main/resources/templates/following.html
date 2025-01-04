@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="s13sh - Following List" />
+    <meta name="theme-color" content="#667eea" />
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <title>Following - s13sh</title>
+    <style>
+      :root {
+        --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+        --hover-gradient: linear-gradient(45deg, #764ba2, #667eea);
+        --primary-color: #667eea;
+        --text-dark: #4a5568;
+        --text-light: #718096;
+        --white: #ffffff;
+      }
+
+      body {
+        font-family: "Poppins", system-ui, -apple-system, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      .navbar {
+        background: var(--primary-gradient);
+        padding: 1rem 2rem;
+      }
+
+      .navbar-brand {
+        color: var(--white) !important;
+        font-weight: 800;
+        font-size: 1.5rem;
+      }
+
+      .nav-link {
+        color: var(--white) !important;
+        font-weight: 600;
+        margin: 0 1rem;
+      }
+
+      .main-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .profile-card {
+        background: var(--white);
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .user-card {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+      }
+
+      .user-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 1rem;
+      }
+
+      .user-info {
+        flex-grow: 1;
+      }
+
+      .user-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .user-bio {
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+
+      .unfollow-btn {
+        background: var(--primary-gradient);
+        color: var(--white);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-weight: 600;
+      }
+
+      .message {
+        position: fixed;
+        top: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        text-align: center;
+        width: 90%;
+        max-width: 600px;
+      }
+
+      .alert-message {
+        margin: 0.5rem 0;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        animation: fadeIn 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .alert-error {
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+      }
+
+      .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        cursor: pointer;
+        padding: 0 0.5rem;
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+      }
+
+      .close-btn:hover {
+        opacity: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="message" role="alert">
+      <div th:if="${session.error}" class="alert-message alert-error">
+        <span th:text="${session.error}"></span>
+        <button class="close-btn" onclick="this.parentElement.style.display='none'">×</button>
+      </div>
+      <div th:if="${session.success}" class="alert-message alert-success">
+        <span th:text="${session.success}"></span>
+        <button class="close-btn" onclick="this.parentElement.style.display='none'">×</button>
+      </div>
+      <th:block th:text="${@messageRemover.remove()}"></th:block>
+    </div>
+
+    <nav class="navbar navbar-expand-lg">
+      <a class="navbar-brand" href="/home">s13sh</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/home"><i class="fas fa-home"></i> Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="main-container">
+      <div class="profile-card">
+        <h3 class="mb-4">People You Follow</h3>
+        <div th:if="${#lists.isEmpty(following)}" class="text-center">
+          <p>You are not following anyone yet!</p>
+        </div>
+
+        <div th:each="user : ${following}" class="user-card">
+          <img th:src="${user.profilepictureurl}" alt="User Avatar" class="user-avatar"/>
+          <div class="user-info">
+            <h5 class="user-name" th:text="${user.username}"></h5>
+            <p class="user-bio" th:text="${user.bio}"></p>
+          </div>
+          <a th:href="'/unfollow/' + ${user.id}" class="btn unfollow-btn">
+            Unfollow
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-container mt-4">
+          <div class="profile-card">
+            <h3 class="mb-4">Recommended Users</h3>
+            <div th:if="${#lists.isEmpty(recommendations)}" class="text-center">
+              <p>No recommendations available at the moment!</p>
+            </div>
+    
+            <div th:each="recommended : ${recommendations}" class="user-card">
+              <img th:src="${recommended.profilepictureurl}" alt="User Avatar" class="user-avatar"/>
+              <div class="user-info">
+                <h5 class="user-name" th:text="${recommended.username}"></h5>
+                <p class="user-bio" th:text="${recommended.bio}"></p>
+              </div>
+              <a th:href="'/follow/' + ${recommended.id}" class="btn follow-btn">
+                Follow
+              </a>
+            </div>
+          </div>
+        </div>
+    
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const messages = document.querySelectorAll(".alert-message");
+        messages.forEach((message) => {
+          setTimeout(() => {
+            message.style.display = "none";
+          }, 3000);
+        });
+      });
+    </script>
+  </body>
+</html>

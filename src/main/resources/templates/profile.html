@@ -1,186 +1,336 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="s13sh - Your Social Media Profile">
-    <meta name="theme-color" content="#667eea">
-    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="s13sh - Your Social Media Profile" />
+    <meta name="theme-color" content="#667eea" />
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
     <title>Profile - s13sh</title>
     <style>
-         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
-            --hover-gradient: linear-gradient(45deg, #764ba2, #667eea);
-            --primary-color: #667eea;
-            --text-dark: #4a5568;
-            --text-light: #718096;
-            --white: #ffffff;
-        }
+      :root {
+        --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+        --hover-gradient: linear-gradient(45deg, #764ba2, #667eea);
+        --primary-color: #667eea;
+        --text-dark: #4a5568;
+        --text-light: #718096;
+        --white: #ffffff;
+      }
 
-        body {
-            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            min-height: 100vh;
-        }
+      body {
+        font-family: "Poppins", system-ui, -apple-system, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        min-height: 100vh;
+      }
 
-        .navbar {
-            background: var(--primary-gradient);
-            padding: 1rem 2rem;
-        }
+      .navbar {
+        background: var(--primary-gradient);
+        padding: 1rem 2rem;
+      }
 
-        .navbar-brand {
-            color: var(--white) !important;
-            font-weight: 800;
-            font-size: 1.5rem;
-        }
+      .navbar-brand {
+        color: var(--white) !important;
+        font-weight: 800;
+        font-size: 1.5rem;
+      }
 
-        .nav-link {
-            color: var(--white) !important;
-            font-weight: 600;
-            margin: 0 1rem;
-        }
+      .nav-link {
+        color: var(--white) !important;
+        font-weight: 600;
+        margin: 0 1rem;
+      }
 
+      .main-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
 
-        .main-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
+      .profile-card {
+        background: var(--white);
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
 
-        .profile-card {
-            background: var(--white);
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
+      .message {
+        position: fixed;
+        top: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        text-align: center;
+        width: 90%;
+        max-width: 600px;
+      }
 
-        .profile-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+      .alert-message {
+        margin: 0.5rem 0;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        animation: fadeIn 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
 
-        .profile-header img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin-bottom: 1rem;
-            border: 4px solid var(--primary-color);
-        }
+      .alert-error {
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+      }
 
-        .edit-delete-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            font-weight: 600;
-            margin: 0 0.5rem;
-        }
+      .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+      }
 
-        .edit-btn {
-            background: var(--primary-gradient);
-            color: var(--white);
-            border: none;
-        }
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        cursor: pointer;
+        padding: 0 0.5rem;
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+      }
 
-        .delete-btn {
-            background: #dc3545;
-            color: var(--white);
-            border: none;
-        }
+      .close-btn:hover {
+        opacity: 1;
+      }
+
+      .profile-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .profile-header img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin-bottom: 1rem;
+        border: 4px solid var(--primary-color);
+      }
+
+      .edit-delete-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-weight: 600;
+        margin: 0 0.5rem;
+      }
+
+      .edit-btn {
+        background: var(--primary-gradient);
+        color: var(--white);
+        border: none;
+      }
+
+      .delete-btn {
+        background: #dc3545;
+        color: var(--white);
+        border: none;
+      }
+
+      .post-image {
+        max-width: 300px;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin: 1rem 0;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-    <nav class="navbar navbar-expand-lg">
-        <a class="navbar-brand" href="/home">s13sh</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
+  <body>
+    <div class="message" role="alert">
+      <div th:if="${session.error}" class="alert-message alert-error">
+        <span th:text="${session.error}"></span>
+        <button
+          class="close-btn"
+          onclick="this.parentElement.style.display='none'"
+        >
+          ×
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/home"><i class="fas fa-home"></i> Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/profile"><i class="fas fa-user"></i> Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
-        </div>
+      </div>
+      <div th:if="${session.success}" class="alert-message alert-success">
+        <span th:text="${session.success}"></span>
+        <button
+          class="close-btn"
+          onclick="this.parentElement.style.display='none'"
+        >
+          ×
+        </button>
+      </div>
+      <th:block th:text="${@messageRemover.remove()}"></th:block>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const messages = document.querySelectorAll(".alert-message");
+        messages.forEach((message) => {
+          setTimeout(() => {
+            message.style.display = "none";
+          }, 3000);
+        });
+      });
+    </script>
+    <nav class="navbar navbar-expand-lg">
+      <a class="navbar-brand" href="/home">s13sh</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/home"
+              ><i class="fas fa-home"></i> Home</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/profile"
+              ><i class="fas fa-user"></i> Profile</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout"
+              ><i class="fas fa-sign-out-alt"></i> Logout</a
+            >
+          </li>
+        </ul>
+      </div>
     </nav>
 
     <div class="main-container">
-        <div class="profile-card">
-            <div class="profile-header">
-                <img th:src="${user.profilepictureurl}" alt="Profile Picture">
-                <h3 class="user-name">Username: <span th:text="${user.username}"></span></h3>
-                <p class="text-muted">Email: <span th:text="${user.email}"></span></p>
-                <p class="bio">Bio: <span th:text="${user.bio}"></span></p>
-            </div>
-            <div class="text-center">
-                <a th:href="'/profile/edit/'+${user.id}" class="btn edit-btn edit-delete-btn">
-                    <i class="fas fa-user-edit"></i> Edit Profile
-                </a>
-            </div>
+      <div class="profile-card">
+        <div class="profile-header">
+          <img th:src="${user.profilepictureurl}" alt="Profile Picture" />
+          <h3 class="user-name">
+            Username: <span th:text="${user.username}"></span>
+          </h3>
+          <p class="text-muted">Email: <span th:text="${user.email}"></span></p>
+          <p class="bio">Bio: <span th:text="${user.bio}"></span></p>
+        </div>
+        
+        <div class="profile-stats">
+          <a href="/followers" class="stat-item btn">
+            <span class="stat-count" th:text="${#lists.size(user.followers)}"
+              >0</span
+            >
+            <span class="stat-label">Followers</span>
+          </a>
+          <a href="/following" class="stat-item btn">
+            <span class="stat-count" th:text="${#lists.size(user.following)}"
+              >0</span
+            >
+            <span class="stat-label">Following</span>
+          </a>
         </div>
 
-        <h3 class="mb-4">My Posts</h3>
-        <div class="post-card" th:each="post : ${posts}">
-            <div class="post-header">
-                <img src="/images/default-avatar.png" alt="Profile" class="profile-image">
-                <div>
-                    <div class="user-name" th:text="${user.username}">Username</div>
-                    <div class="post-time" th:text="${#dates.format(post.createdAt, 'MM/dd/yyyy HH:mm')}">Post date
-                    </div>
-                </div>
-            </div>
+        <div class="text-center">
+          <a
+            th:href="'/profile/edit/'+${user.id}"
+            class="btn edit-btn edit-delete-btn"
+          >
+            <i class="fas fa-user-edit"></i> Edit Profile
+          </a>
+        </div>
+      </div>
+
+      <h3 class="mb-4">My Posts</h3>
+      <div class="row g-4">
+        <div class="col-md-4 mb-4" th:each="post : ${posts}">
+          <div class="post-card">
             <div class="post-content">
-                <p th:text="${post.content}">Post content</p>
-                <img th:if="${post.imageUrl}" th:src="${post.imageUrl}" alt="Post Image" class="post-image">
+              <img
+                th:if="${post.imageUrl}"
+                th:src="${post.imageUrl}"
+                alt="Post Image"
+                class="post-image"
+                style="width: 100%; height: auto"
+              />
+              <p class="post-caption" th:text="${post.caption}"></p>
+              <p
+                class="post-time text-muted"
+                th:text="${#temporals.format(post.postedAt, 'MMM dd, yyyy HH:mm')}"
+              ></p>
             </div>
             <div class="post-actions">
-                <a th:href="@{/post/edit/{id}(id=${post.id})}" class="btn edit-btn edit-delete-btn">
-                    <i class="fas fa-edit"></i> Edit
-                </a>
-                <a th:href="@{/post/delete/{id}(id=${post.id})}" class="btn delete-btn edit-delete-btn">
-                    <i class="fas fa-trash"></i> Delete
-                </a>
+              <a
+                th:href="'/post/edit/'+${post.id}"
+                class="btn edit-btn edit-delete-btn"
+              >
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              <a
+                th:href="'/post/delete/'+${post.id}"
+                class="btn delete-btn edit-delete-btn"
+                onclick="return confirm('Are you sure you want to delete this post?')"
+              >
+                <i class="fas fa-trash"></i> Delete
+              </a>
             </div>
+          </div>
         </div>
-        <div th:if="${#lists.isEmpty(posts)}" class="profile-card text-center">
-            <p class="mb-0">You haven't added any posts yet!</p>
-        </div>
+      </div>
+      <div th:if="${#lists.isEmpty(posts)}" class="profile-card text-center">
+        <p class="mb-0">You haven't added any posts yet!</p>
+      </div>
 
-        <div class="profile-card mt-4">
-            <h3 class="mb-4">Create New Post</h3>
-            <form action="/post/create" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="content">Caption</label>
-                    <textarea class="form-control" id="content" name="content" rows="3" placeholder="Write a caption..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="image">Add Image (optional)</label>
-                    <input type="file" class="form-control-file" id="image" name="image" accept="image/*">
-                </div>
-                <button type="submit" class="btn edit-btn edit-delete-btn">
-                    <i class="fas fa-paper-plane"></i> Post
-                </button>
-            </form>
-        </div>
+      <div class="profile-card mt-4">
+        <h3 class="mb-4">Create New Post</h3>
+        <form action="/post/create" method="post" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="content">Caption</label>
+            <textarea
+              class="form-control"
+              id="content"
+              name="caption"
+              rows="3"
+              placeholder="Write a caption..."
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="image">Add Image (optional)</label>
+            <input
+              type="file"
+              class="form-control-file"
+              id="image"
+              name="image"
+              accept="image/*"
+            />
+          </div>
+          <button type="submit" class="btn edit-btn edit-delete-btn">
+            <i class="fas fa-paper-plane"></i> Post
+          </button>
+        </form>
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.min.js"></script>
-</body>
-
+  </body>
 </html>
-</div>

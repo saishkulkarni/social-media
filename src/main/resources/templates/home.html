@@ -48,59 +48,60 @@
         }
 
         .main-container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 2rem auto;
             padding: 0 1rem;
         }
 
         .post-card {
             background: var(--white);
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
             transition: transform 0.3s ease;
         }
 
         .post-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
         }
 
         .post-header {
-            padding: 1rem;
+            padding: 0.75rem;
             border-bottom: 1px solid #edf2f7;
             display: flex;
             align-items: center;
         }
 
         .profile-image {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            margin-right: 1rem;
+            margin-right: 0.75rem;
         }
 
         .user-name {
             font-weight: 600;
             color: var(--text-dark);
+            font-size: 0.9rem;
         }
 
         .post-time {
             color: var(--text-light);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
         }
 
         .post-content {
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
         .post-image {
             width: 100%;
             border-radius: 0.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
         .post-actions {
-            padding: 1rem;
+            padding: 0.75rem;
             border-top: 1px solid #edf2f7;
             display: flex;
             justify-content: space-around;
@@ -115,6 +116,56 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .message {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .alert-message {
+            margin: 0.5rem 0;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            animation: fadeIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0 0.5rem;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .close-btn:hover {
+            opacity: 1;
         }
 
         .action-btn:hover {
@@ -125,8 +176,8 @@
             background: var(--primary-gradient);
             color: var(--white);
             border: none;
-            border-radius: 2rem;
-            padding: 0.75rem 2rem;
+            border-radius: 1.5rem;
+            padding: 0.5rem 1.5rem;
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.3s ease;
@@ -143,13 +194,34 @@
             }
 
             .navbar {
-                padding: 1rem;
+                padding: 0.75rem;
             }
         }
     </style>
 </head>
 
 <body>
+    <div class="message" role="alert">
+        <div th:if="${session.error}" class="alert-message alert-error">
+            <span th:text="${session.error}"></span>
+            <button class="close-btn" onclick="this.parentElement.style.display='none'">×</button>
+        </div>
+        <div th:if="${session.success}" class="alert-message alert-success">
+            <span th:text="${session.success}"></span>
+            <button class="close-btn" onclick="this.parentElement.style.display='none'">×</button>
+        </div>
+        <th:block th:text="${@messageRemover.remove()}"></th:block>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const messages = document.querySelectorAll('.alert-message');
+            messages.forEach(message => {
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 3000);
+            });
+        });
+    </script>
     <nav class="navbar navbar-expand-lg">
         <a class="navbar-brand" href="/home">s13sh</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
@@ -170,17 +242,17 @@
         </div>
     </nav>
     <div class="main-container">
-        <div class="post-card">
-            <div class="post-header">
-                <img src="/images/default-avatar.png" alt="Profile" class="profile-image">
+        <div class="post-card" th:if="${posts}" th:each="post : ${posts}">
+            <div class="post-header" >
+                <img th:src="${post.user.profilepictureurl}" alt="Profile" class="profile-image">
                 <div>
-                    <div class="user-name">John Doe</div>
-                    <div class="post-time">2 hours ago</div>
+                    <div class="user-name" th:text="${post.user.username}"></div>
+                    <div class="post-time" th:text="${post.postedAt}"></div>
                 </div>
             </div>
             <div class="post-content">
-                <p>Just had an amazing day at the beach! 🌊</p>
-                <img src="/images/beach-post.jpg" alt="Beach" class="post-image">
+                <p th:text="${post.caption}"></p>
+                <img th:src="${post.imageUrl}" alt="Beach" class="post-image">
             </div>
             <div class="post-actions">
                 <button class="action-btn"><i class="far fa-heart"></i> Like</button>

@@ -1,17 +1,22 @@
 package com.s13sh.social_media.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
+import com.s13sh.social_media.dto.Post;
 import com.s13sh.social_media.dto.User;
 import com.s13sh.social_media.helper.AES;
 import com.s13sh.social_media.helper.Cloudinaryhelper;
 import com.s13sh.social_media.helper.MyEmailSender;
+import com.s13sh.social_media.repository.PostRepository;
 import com.s13sh.social_media.repository.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
@@ -27,6 +32,9 @@ public class UserService {
 
     @Autowired
     Cloudinaryhelper cloudinaryhelper;
+
+    @Autowired
+    PostRepository postRepository;
 
     public String loadRegister(ModelMap map, User user) {
         map.put("user", user);
@@ -114,11 +122,16 @@ public class UserService {
         }
     }
 
-    public String loadHome(HttpSession session) {
+    public String loadHome(HttpSession session,ModelMap map) {
         if (session.getAttribute("user") == null) {
             session.setAttribute("error", "Please Login First");
             return "redirect:/login";
         } else {
+            User user=(User) session.getAttribute("user");
+            List<User> following=user.getFollowing();
+            if(!following.isEmpty())
+               map.put("posts", postRepository.findByUserIn(following));
+
             return "home.html";
         }
     }
@@ -136,8 +149,203 @@ public class UserService {
             return "redirect:/login";
         } else {
             map.put("user", user);
+            List<Post> posts = postRepository.findByUser(user);
+            if(!posts.isEmpty())
+                map.put("posts", posts);
             return "profile.html";
         }
     }
 
+    public String loadEditProfile(int id, ModelMap map, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            map.put("user", user);
+            return "edit-profile.html";
+        }
+    }
+
+    public String updateProfile(User newUser, HttpSession session) throws IOException {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            user.setFirstname(newUser.getFirstname());
+            user.setLastname(newUser.getLastname());
+            user.setBio(newUser.getBio());
+            if (!newUser.getPassword().equals(""))
+                user.setPassword(AES.encrypt(newUser.getPassword()));
+            if (newUser.getProfilepicture().getBytes().length > 0)
+                user.setProfilepictureurl(
+                        cloudinaryhelper.uploadProfilePicture(newUser.getProfilepicture().getBytes()));
+
+            userRepository.save(user);
+            session.setAttribute("success", "Profile Updated Success");
+            return "redirect:/profile";
+
+        }
+    }
+
+    public String createPost(HttpSession session, Post post) throws Exception {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            post.setUser(user);
+            post.setImageUrl(cloudinaryhelper.uploadPostPicture(post.getImage().getBytes()));
+            postRepository.save(post);
+            session.setAttribute("success", "Post Added Success");
+            return "redirect:/profile";
+        }
+    }
+
+    public String deletePost(int id, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            Post post = postRepository.findById(id).orElseThrow();
+            if (post.getUser().getId() == user.getId()) {
+                postRepository.delete(post);
+                session.setAttribute("success", "Post Deleted Success");
+                return "redirect:/profile";
+            } else {
+                session.setAttribute("error", "You are not authorized to delete this post");
+                return "redirect:/profile";
+            }
+        }
+    }
+
+    public String editPost(int id, ModelMap map, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            Post post = postRepository.findById(id).orElseThrow();
+            if (post.getUser().getId() == user.getId()) {
+                map.put("post", post);
+                return "edit-post.html";
+            } else {
+                session.setAttribute("error", "You are not authorized to edit this post");
+                return "redirect:/profile";
+            }
+        }
+    }
+
+    public String updatePost(Post post, HttpSession session) throws IOException {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            Post post1 = postRepository.findById(post.getId()).orElseThrow();
+            if (post1.getUser().getId() == user.getId()) {
+                post1.setCaption(post.getCaption());
+                if(post.getImage().getBytes().length > 0)
+                post1.setImageUrl(cloudinaryhelper.uploadPostPicture(post.getImage().getBytes()));
+                postRepository.save(post1);
+                session.setAttribute("success", "Post Updated Success");
+                return "redirect:/profile";
+            } else {
+                session.setAttribute("error", "You are not authorized to edit this post");
+                return "redirect:/profile";
+            }
+        }
+    }
+
+    public String loadFollowers(HttpSession session, ModelMap map) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            List<User> followers=user.getFollowers();
+            if(followers.isEmpty()){
+                session.setAttribute("error", "No Followers Yet");
+                return "redirect:/profile";
+            }
+            else{
+            map.put("followers",followers );
+            return "followers.html";
+            }
+        }
+    }
+
+    public String loadFollowing(HttpSession session, ModelMap map) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            List<User> following=user.getFollowing();
+            List<User> recommendations=userRepository.findAll();
+            List<User> usersToRemove=new ArrayList<>();
+           
+            for(User user1:recommendations){
+                if(user1.getId()==user.getId() || following.stream().map(x->x.getId()).collect(Collectors.toList()).contains(user1.getId()))
+                    usersToRemove.add(user1);   
+            }
+
+            recommendations.removeAll(usersToRemove);
+
+            map.put("recommendations", recommendations);
+            map.put("following",following );
+            return "following.html";
+            
+        }   
+    }
+
+    public String follow(int id, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            User user1 = userRepository.findById(id).orElseThrow();
+            if (user.getFollowing().contains(user1)) {
+                            session.setAttribute("error", "Already Following");
+                            return "redirect:/following";
+            }
+                user.getFollowing().add(user1);
+                userRepository.save(user);
+                user1.getFollowers().add(user);
+                userRepository.save(user1);
+                session.setAttribute("success", "Followed Successfully");
+                return "redirect:/profile";
+        }
+    }
+
+    public String unfollow(int id, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            User user1 = userRepository.findById(id).orElseThrow();
+            if (!user.getFollowing().stream().map(x->x.getId()).collect(Collectors.toList()).contains(user1.getId())) {
+                            session.setAttribute("error", "Not Following");
+                            return "redirect:/following";
+            }
+            User user3=null;
+                for(User user2:user.getFollowing()){
+                    if(user2.getId()==user1.getId()){
+                        user3=user2;
+                        break;
+                    }
+                }
+                user.getFollowing().remove(user3);
+
+
+                user1.getFollowers().remove(user);
+                userRepository.save(user);
+                session.setAttribute("success", "Unfollowed Successfully");
+                return "redirect:/profile";
+        }
+    }
 }

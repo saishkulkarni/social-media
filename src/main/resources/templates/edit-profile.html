@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="s13sh - Edit Your Profile" />
+    <meta name="theme-color" content="#667eea" />
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <title>Edit Profile - s13sh</title>
+    <style>
+      :root {
+        --primary-gradient: linear-gradient(135deg, #667eea, #764ba2);
+        --hover-gradient: linear-gradient(45deg, #764ba2, #667eea);
+        --primary-color: #667eea;
+        --text-dark: #4a5568;
+        --text-light: #718096;
+        --white: #ffffff;
+      }
+
+      body {
+        font-family: "Poppins", system-ui, -apple-system, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      .navbar {
+        background: var(--primary-gradient);
+        padding: 1rem 2rem;
+      }
+
+      .navbar-brand {
+        color: var(--white) !important;
+        font-weight: 800;
+        font-size: 1.5rem;
+      }
+
+      .nav-link {
+        color: var(--white) !important;
+        font-weight: 600;
+        margin: 0 1rem;
+      }
+
+      .main-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .profile-card {
+        background: var(--white);
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-weight: 600;
+        margin: 0 0.5rem;
+      }
+
+      .btn-primary {
+        background: var(--primary-gradient);
+        color: var(--white);
+        border: none;
+      }
+
+      .btn-secondary {
+        background: var(--text-light);
+        color: var(--white);
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg">
+      <a class="navbar-brand" href="/home">s13sh</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/home"
+              ><i class="fas fa-home"></i> Home</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/profile"
+              ><i class="fas fa-user"></i> Profile</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout"
+              ><i class="fas fa-sign-out-alt"></i> Logout</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="main-container">
+      <div class="profile-card">
+        <h2 class="mb-4">Edit Profile</h2>
+        <form action="/profile/update" th:object="${user}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="id" th:field="*{id}" />
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              th:field="*{username}"
+              readonly
+            />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              th:field="*{email}"
+              readonly
+            />
+          </div>
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="firstName"
+              th:field="*{firstname}"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="lastName"
+              th:field="*{lastname}"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="password"
+              >New Password (leave blank to keep current)</label
+            >
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+            />
+          </div>
+          <div class="form-group">
+                      <label>Current Profile Picture</label>
+                      <div>
+                        <img th:if="${user.profilepictureurl != null}" 
+                             th:src="${user.profilepictureurl}"
+                             alt="Current Profile Picture"
+                             class="img-thumbnail"
+                             style="max-width: 200px; margin-bottom: 10px;"
+                        />
+                        <p th:if="${user.profilepictureurl == null}" class="text-muted">No profile picture uploaded</p>
+                      </div>
+                    </div>
+          
+          <div class="form-group">
+            <label for="profilePicture">Profile Picture (leave blank to keep current)</label>
+            <input
+              type="file"
+              class="form-control-file"
+              id="profilePicture"
+              name="profilepicture"
+              accept="image/*"
+            />
+          </div>
+
+          <div class="form-group">
+                      <label for="bio">Bio</label>
+                      <textarea
+                        class="form-control"
+                        id="bio"
+                        th:field="*{bio}"
+                        rows="3"
+                      ></textarea>
+                    </div>
+          
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+            <a th:href="@{/profile}" class="btn btn-secondary">
+              <i class="fas fa-times"></i> Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
