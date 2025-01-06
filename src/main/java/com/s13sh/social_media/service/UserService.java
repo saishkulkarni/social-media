@@ -348,4 +348,18 @@ public class UserService {
                 return "redirect:/profile";
         }
     }
+
+    public String loadProfile(int id, ModelMap map, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            session.setAttribute("error", "Please Login First");
+            return "redirect:/login";
+        } else {
+            User user1 = userRepository.findById(id).orElseThrow();
+            List<Post> posts = postRepository.findByUser(user1);
+            map.put("posts", posts);
+            map.put("user", user1);
+            return "profile.html";
+        }
+    }
 }

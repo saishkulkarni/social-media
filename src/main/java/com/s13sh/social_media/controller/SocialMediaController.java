@@ -124,4 +124,9 @@ public class SocialMediaController {
         return userService.unfollow(id, session);
     }
 
+    @GetMapping("/profile/{id}")
+    public String loadProfile(@PathVariable int id, ModelMap map, HttpSession session) {
+        return userService.loadProfile(id, map, session);
+    }
+
 }

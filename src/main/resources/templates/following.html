@@ -195,6 +195,9 @@
             <h5 class="user-name" th:text="${user.username}"></h5>
             <p class="user-bio" th:text="${user.bio}"></p>
           </div>
+          <a th:href="'/profile/' + ${user.id}" class="btn unfollow-btn">
+            View Profile
+          </a>
           <a th:href="'/unfollow/' + ${user.id}" class="btn unfollow-btn">
             Unfollow
           </a>
@@ -215,7 +218,10 @@
                 <h5 class="user-name" th:text="${recommended.username}"></h5>
                 <p class="user-bio" th:text="${recommended.bio}"></p>
               </div>
-              <a th:href="'/follow/' + ${recommended.id}" class="btn follow-btn">
+              <a th:href="'/profile/' + ${recommended.id}" class="btn unfollow-btn">
+                View Profile
+              </a>
+              <a th:href="'/follow/' + ${recommended.id}" class="btn unfollow-btn">
                 Follow
               </a>
             </div>

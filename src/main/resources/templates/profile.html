@@ -69,6 +69,14 @@
         margin-bottom: 2rem;
       }
 
+      .unfollow-btn {
+        background: var(--primary-gradient);
+        color: var(--white);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-weight: 600;
+      }
       .message {
         position: fixed;
         top: 1.5rem;
@@ -233,33 +241,44 @@
           <p class="text-muted">Email: <span th:text="${user.email}"></span></p>
           <p class="bio">Bio: <span th:text="${user.bio}"></span></p>
         </div>
-        
-        <div class="profile-stats">
-          <a href="/followers" class="stat-item btn">
+
+        <div th:if="${session.user.id!=user.id}" class="text-center">
+        <a th:href="'/follow/' + ${user.id}" class="btn unfollow-btn">
+          Follow
+        </a>
+        </div>
+
+    
+        <div th:if="${session.user.id==user.id}">
+          <div class="profile-stats">
+            <a href="/followers" class="stat-item btn">
             <span class="stat-count" th:text="${#lists.size(user.followers)}"
               >0</span
             >
-            <span class="stat-label">Followers</span>
-          </a>
-          <a href="/following" class="stat-item btn">
+           <span class="stat-label">Followers</span>
+            </a>
+            <a href="/following" class="stat-item btn">
             <span class="stat-count" th:text="${#lists.size(user.following)}"
               >0</span
             >
             <span class="stat-label">Following</span>
-          </a>
-        </div>
+            </a>
+          </div>
 
-        <div class="text-center">
+          <div class="text-center">
           <a
             th:href="'/profile/edit/'+${user.id}"
             class="btn edit-btn edit-delete-btn"
           >
             <i class="fas fa-user-edit"></i> Edit Profile
           </a>
+          </div>
         </div>
+        
       </div>
+      
 
-      <h3 class="mb-4">My Posts</h3>
+      <h3 class="mb-4">Posts</h3>
       <div class="row g-4">
         <div class="col-md-4 mb-4" th:each="post : ${posts}">
           <div class="post-card">
@@ -277,7 +296,8 @@
                 th:text="${#temporals.format(post.postedAt, 'MMM dd, yyyy HH:mm')}"
               ></p>
             </div>
-            <div class="post-actions">
+            
+            <div class="post-actions" th:if="${session.user.id==user.id}">
               <a
                 th:href="'/post/edit/'+${post.id}"
                 class="btn edit-btn edit-delete-btn"
@@ -292,14 +312,19 @@
                 <i class="fas fa-trash"></i> Delete
               </a>
             </div>
+            <div class="post-actions" th:if="${session.user.id!=user.id}">
+             <a href=""><button class="action-btn"><i class="far fa-heart"></i> Like</button></a>
+             <button class="action-btn"><i class="far fa-comment"></i> Comment</button>
+          </div>
           </div>
         </div>
       </div>
       <div th:if="${#lists.isEmpty(posts)}" class="profile-card text-center">
-        <p class="mb-0">You haven't added any posts yet!</p>
+        <p class="mb-0">No posts yet!</p>
       </div>
 
-      <div class="profile-card mt-4">
+      
+      <div class="profile-card mt-4" th:if="${session.user.id==user.id}">
         <h3 class="mb-4">Create New Post</h3>
         <form action="/post/create" method="post" enctype="multipart/form-data">
           <div class="form-group">
