@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.s13sh.social_media.dto.Comment;
 import com.s13sh.social_media.dto.Post;
 import com.s13sh.social_media.dto.User;
 import com.s13sh.social_media.service.UserService;
@@ -129,4 +130,13 @@ public class SocialMediaController {
         return userService.loadProfile(id, map, session);
     }
 
+    @GetMapping("/like/{id}")
+    public String like(@PathVariable int id, HttpSession session) {
+        return userService.like(id, session);
+    }
+
+    @PostMapping("/comment/{id}")
+    public String comment(@PathVariable int id,Comment comment,HttpSession session) {
+        return userService.comment(id,comment,session);
+    }
 }
